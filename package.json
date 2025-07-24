@@ -1,0 +1,106 @@
+{
+  "name": "learn-english-v2",
+  "version": "1.0.0",
+  "description": "A casual English learning desktop application",
+  "main": "src/main/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron-pack": "npm run build && electron-builder",
+    "electron-pack-win": "npm run build && electron-builder --win",
+    "electron-pack-mac": "npm run build && electron-builder --mac",
+    "electron-pack-linux": "npm run build && electron-builder --linux",
+    "test-build": "node scripts/test-build.js"
+  },
+  "keywords": [
+    "english",
+    "learning",
+    "desktop",
+    "electron",
+    "vue"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.4.0",
+    "concurrently": "^8.2.2",
+    "electron": "^24.8.8",
+    "electron-builder": "^24.6.4",
+    "sass": "^1.69.0",
+    "vite": "^4.4.11",
+    "wait-on": "^7.0.1"
+  },
+  "dependencies": {
+    "naive-ui": "^2.35.0",
+    "node-schedule": "^2.1.1",
+    "pinia": "^2.1.7",
+    "sqlite3": "^5.1.6",
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5"
+  },
+  "build": {
+    "appId": "com.learnenglish.v2",
+    "productName": "英语学习助手",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "src/main/**/*",
+      "src/shared/**/*",
+      "assets/**/*",
+      "data/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/backgrounds",
+        "to": "backgrounds",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "data",
+        "to": "data",
+        "filter": ["**/*"]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.education",
+      "icon": "assets/icon.png",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.png"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        }
+      ],
+      "category": "Education",
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

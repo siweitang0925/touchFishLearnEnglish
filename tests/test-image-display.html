@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地图片显示测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .image-display {
+            width: 300px;
+            height: 200px;
+            border: 2px dashed #ccc;
+            margin: 10px 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        .image-display.has-image {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>本地图片显示测试</h1>
+        
+        <div class="test-section">
+            <h3>1. 文件上传测试</h3>
+            <input type="file" id="imageFile" accept="image/*">
+            <button onclick="testFileUpload()">测试文件上传</button>
+            <div class="log" id="uploadLog"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 图片显示测试</h3>
+            <div class="image-display" id="imageDisplay">
+                选择图片后将在这里显示
+            </div>
+            <button onclick="testImageDisplay()">测试图片显示</button>
+            <div class="log" id="displayLog"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 路径测试</h3>
+            <input type="text" id="imagePath" placeholder="输入图片路径" style="width: 100%; padding: 8px; margin: 10px 0;">
+            <button onclick="testPath()">测试路径</button>
+            <div class="log" id="pathLog"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 控制台日志</h3>
+            <div class="log" id="consoleLog"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentImageData = null;
+        
+        // 重写 console.log 来捕获日志
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog('consoleLog', 'LOG:', ...args);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog('consoleLog', 'ERROR:', ...args);
+        };
+        
+        function addToLog(elementId, prefix, ...args) {
+            const logElement = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            logElement.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function testFileUpload() {
+            const fileInput = document.getElementById('imageFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                addToLog('uploadLog', '请先选择文件');
+                return;
+            }
+            
+            addToLog('uploadLog', '文件信息:', {
+                name: file.name,
+                size: file.size,
+                type: file.type
+            });
+            
+            // 创建 FileReader 来读取文件
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentImageData = e.target.result;
+                addToLog('uploadLog', '文件读取成功，数据长度:', currentImageData.length);
+                
+                // 显示图片
+                const imageDisplay = document.getElementById('imageDisplay');
+                imageDisplay.style.backgroundImage = `url('${currentImageData}')`;
+                imageDisplay.classList.add('has-image');
+                imageDisplay.textContent = '图片已加载';
+            };
+            
+            reader.onerror = function(error) {
+                addToLog('uploadLog', '文件读取失败:', error);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        function testImageDisplay() {
+            if (!currentImageData) {
+                addToLog('displayLog', '请先上传图片');
+                return;
+            }
+            
+            addToLog('displayLog', '测试图片显示');
+            addToLog('displayLog', '图片数据长度:', currentImageData.length);
+            
+            // 测试不同的显示方式
+            const imageDisplay = document.getElementById('imageDisplay');
+            
+            // 方式1: 直接使用 data URL
+            imageDisplay.style.backgroundImage = `url('${currentImageData}')`;
+            addToLog('displayLog', '使用 data URL 显示图片');
+        }
+        
+        function testPath() {
+            const pathInput = document.getElementById('imagePath');
+            const path = pathInput.value.trim();
+            
+            if (!path) {
+                addToLog('pathLog', '请输入路径');
+                return;
+            }
+            
+            addToLog('pathLog', '测试路径:', path);
+            
+            // 测试不同的路径格式
+            const testPaths = [
+                path,
+                `file://${path.replace(/\\/g, '/')}`,
+                `local-file://${path.replace(/\\/g, '/')}`
+            ];
+            
+            testPaths.forEach((testPath, index) => {
+                addToLog('pathLog', `测试路径 ${index + 1}:`, testPath);
+                
+                // 创建测试图片元素
+                const img = new Image();
+                img.onload = function() {
+                    addToLog('pathLog', `路径 ${index + 1} 加载成功`);
+                };
+                img.onerror = function() {
+                    addToLog('pathLog', `路径 ${index + 1} 加载失败`);
+                };
+                img.src = testPath;
+            });
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            addToLog('consoleLog', '测试页面已加载');
+            addToLog('consoleLog', '当前时间:', new Date().toLocaleString());
+        });
+    </script>
+</body>
+</html> 

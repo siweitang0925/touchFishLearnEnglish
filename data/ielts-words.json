@@ -1,0 +1,367 @@
+[
+  {
+    "word": "academic",
+    "meaning": "学术的",
+    "example": "Academic writing requires formal language and precise expression."
+  },
+  {
+    "word": "accomplish",
+    "meaning": "完成",
+    "example": "She accomplished all her goals for the year ahead of schedule."
+  },
+  {
+    "word": "accurate",
+    "meaning": "准确的",
+    "example": "The weather forecast was very accurate for the weekend prediction."
+  },
+  {
+    "word": "achieve",
+    "meaning": "达到",
+    "example": "He achieved great success in his career through hard work."
+  },
+  {
+    "word": "adequate",
+    "meaning": "充足的",
+    "example": "The room provided adequate space for all participants."
+  },
+  {
+    "word": "administration",
+    "meaning": "管理",
+    "example": "The administration of the company handled the crisis effectively."
+  },
+  {
+    "word": "advocate",
+    "meaning": "提倡",
+    "example": "Many environmentalists advocate for renewable energy sources."
+  },
+  {
+    "word": "alternative",
+    "meaning": "替代的",
+    "example": "We need to find alternative solutions to this problem."
+  },
+  {
+    "word": "analysis",
+    "meaning": "分析",
+    "example": "The detailed analysis revealed several important findings."
+  },
+  {
+    "word": "approach",
+    "meaning": "方法",
+    "example": "This approach has proven to be very effective in practice."
+  },
+  {
+    "word": "appropriate",
+    "meaning": "适当的",
+    "example": "It's important to choose appropriate clothing for the weather."
+  },
+  {
+    "word": "approximately",
+    "meaning": "大约",
+    "example": "The journey takes approximately two hours by train."
+  },
+  {
+    "word": "argument",
+    "meaning": "论点",
+    "example": "His argument was well-supported by evidence."
+  },
+  {
+    "word": "aspect",
+    "meaning": "方面",
+    "example": "We need to consider all aspects of this complex issue."
+  },
+  {
+    "word": "assume",
+    "meaning": "假设",
+    "example": "Don't assume that everyone knows about this topic."
+  },
+  {
+    "word": "authority",
+    "meaning": "权威",
+    "example": "The local authority is responsible for maintaining public services."
+  },
+  {
+    "word": "available",
+    "meaning": "可用的",
+    "example": "The information is available online for free."
+  },
+  {
+    "word": "benefit",
+    "meaning": "好处",
+    "example": "Regular exercise provides many health benefits."
+  },
+  {
+    "word": "capacity",
+    "meaning": "能力",
+    "example": "The stadium has a capacity of 50,000 people."
+  },
+  {
+    "word": "challenge",
+    "meaning": "挑战",
+    "example": "This project presents a significant challenge for our team."
+  },
+  {
+    "word": "circumstance",
+    "meaning": "情况",
+    "example": "Under these circumstances, we have no choice but to proceed."
+  },
+  {
+    "word": "community",
+    "meaning": "社区",
+    "example": "The local community strongly supports this initiative."
+  },
+  {
+    "word": "complex",
+    "meaning": "复杂的",
+    "example": "This is a complex problem that requires careful consideration."
+  },
+  {
+    "word": "concept",
+    "meaning": "概念",
+    "example": "The basic concept is easy to understand."
+  },
+  {
+    "word": "conclude",
+    "meaning": "结论",
+    "example": "Based on the evidence, we can conclude that the theory is correct."
+  },
+  {
+    "word": "conduct",
+    "meaning": "进行",
+    "example": "The research team will conduct a series of experiments."
+  },
+  {
+    "word": "consider",
+    "meaning": "考虑",
+    "example": "We need to consider all the options before making a decision."
+  },
+  {
+    "word": "consist",
+    "meaning": "组成",
+    "example": "The committee consists of five members."
+  },
+  {
+    "word": "constant",
+    "meaning": "持续的",
+    "example": "The constant noise made it difficult to concentrate."
+  },
+  {
+    "word": "construct",
+    "meaning": "构建",
+    "example": "They plan to construct a new bridge across the river."
+  },
+  {
+    "word": "contain",
+    "meaning": "包含",
+    "example": "This book contains valuable information about the topic."
+  },
+  {
+    "word": "context",
+    "meaning": "背景",
+    "example": "It's important to understand the historical context of this event."
+  },
+  {
+    "word": "create",
+    "meaning": "创造",
+    "example": "The artist creates beautiful paintings using various techniques."
+  },
+  {
+    "word": "culture",
+    "meaning": "文化",
+    "example": "The city has a rich cultural heritage and diverse population."
+  },
+  {
+    "word": "data",
+    "meaning": "数据",
+    "example": "The data shows a clear trend over the past decade."
+  },
+  {
+    "word": "define",
+    "meaning": "定义",
+    "example": "It's important to clearly define the scope of the project."
+  },
+  {
+    "word": "demonstrate",
+    "meaning": "证明",
+    "example": "The experiment demonstrates the effectiveness of the new method."
+  },
+  {
+    "word": "develop",
+    "meaning": "发展",
+    "example": "The company continues to develop new products for the market."
+  },
+  {
+    "word": "different",
+    "meaning": "不同的",
+    "example": "People have different opinions about this controversial topic."
+  },
+  {
+    "word": "economic",
+    "meaning": "经济的",
+    "example": "The economic impact of this policy will be significant."
+  },
+  {
+    "word": "environment",
+    "meaning": "环境",
+    "example": "We must protect the environment for future generations."
+  },
+  {
+    "word": "establish",
+    "meaning": "建立",
+    "example": "The organization was established in 1990 to help local communities."
+  },
+  {
+    "word": "evidence",
+    "meaning": "证据",
+    "example": "There is strong evidence to support this theory."
+  },
+  {
+    "word": "experience",
+    "meaning": "经验",
+    "example": "Her experience in this field makes her the perfect candidate."
+  },
+  {
+    "word": "factor",
+    "meaning": "因素",
+    "example": "Several factors contributed to the success of this project."
+  },
+  {
+    "word": "function",
+    "meaning": "功能",
+    "example": "The main function of this device is to monitor temperature."
+  },
+  {
+    "word": "identify",
+    "meaning": "识别",
+    "example": "Scientists were able to identify the cause of the problem."
+  },
+  {
+    "word": "indicate",
+    "meaning": "表明",
+    "example": "The results indicate that our approach is working."
+  },
+  {
+    "word": "individual",
+    "meaning": "个人",
+    "example": "Each individual has the right to express their opinion."
+  },
+  {
+    "word": "influence",
+    "meaning": "影响",
+    "example": "Parents have a strong influence on their children's development."
+  },
+  {
+    "word": "involve",
+    "meaning": "涉及",
+    "example": "This project will involve many different departments."
+  },
+  {
+    "word": "issue",
+    "meaning": "问题",
+    "example": "We need to address this issue as soon as possible."
+  },
+  {
+    "word": "knowledge",
+    "meaning": "知识",
+    "example": "Sharing knowledge is essential for team success."
+  },
+  {
+    "word": "method",
+    "meaning": "方法",
+    "example": "This method has been proven to be very effective."
+  },
+  {
+    "word": "occur",
+    "meaning": "发生",
+    "example": "These events occur regularly throughout the year."
+  },
+  {
+    "word": "participate",
+    "meaning": "参与",
+    "example": "Everyone is encouraged to participate in the discussion."
+  },
+  {
+    "word": "policy",
+    "meaning": "政策",
+    "example": "The government has implemented a new policy to address this issue."
+  },
+  {
+    "word": "process",
+    "meaning": "过程",
+    "example": "The application process takes about two weeks to complete."
+  },
+  {
+    "word": "provide",
+    "meaning": "提供",
+    "example": "The organization provides support to families in need."
+  },
+  {
+    "word": "purpose",
+    "meaning": "目的",
+    "example": "The main purpose of this meeting is to discuss the budget."
+  },
+  {
+    "word": "quality",
+    "meaning": "质量",
+    "example": "We are committed to maintaining high quality standards."
+  },
+  {
+    "word": "require",
+    "meaning": "需要",
+    "example": "This position requires at least five years of experience."
+  },
+  {
+    "word": "research",
+    "meaning": "研究",
+    "example": "The research team has made significant progress in their work."
+  },
+  {
+    "word": "resource",
+    "meaning": "资源",
+    "example": "We need to allocate our resources more efficiently."
+  },
+  {
+    "word": "response",
+    "meaning": "回应",
+    "example": "The company's response to the crisis was immediate and effective."
+  },
+  {
+    "word": "significant",
+    "meaning": "重要的",
+    "example": "This discovery represents a significant breakthrough in the field."
+  },
+  {
+    "word": "similar",
+    "meaning": "相似的",
+    "example": "These two approaches are very similar in their methodology."
+  },
+  {
+    "word": "specific",
+    "meaning": "具体的",
+    "example": "Please provide specific examples to support your argument."
+  },
+  {
+    "word": "structure",
+    "meaning": "结构",
+    "example": "The structure of this organization is quite complex."
+  },
+  {
+    "word": "system",
+    "meaning": "系统",
+    "example": "The new system will improve efficiency and reduce costs."
+  },
+  {
+    "word": "theory",
+    "meaning": "理论",
+    "example": "This theory has been widely accepted in the scientific community."
+  },
+  {
+    "word": "understand",
+    "meaning": "理解",
+    "example": "It's important to understand the context before making decisions."
+  },
+  {
+    "word": "various",
+    "meaning": "各种的",
+    "example": "The project involves various stakeholders from different sectors."
+  }
+] 

@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest]
     
     steps:
       - name: Checkout code
@@ -36,5 +36,35 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-build
+          path: release/
+          retention-days: 30
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies with prebuilt binaries
+        run: |
+          npm ci --build-from-source=false
+          npm rebuild sqlite3 --build-from-source=false
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Build Electron app
+        run: npm run electron-pack
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
           path: release/
           retention-days: 30 

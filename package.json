@@ -37,7 +37,7 @@
     "naive-ui": "^2.35.0",
     "node-schedule": "^2.1.1",
     "pinia": "^2.1.7",
-    "sqlite3": "^5.1.6",
+    "sqlite3": "^5.1.7",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
@@ -59,12 +59,16 @@
       {
         "from": "assets/backgrounds",
         "to": "backgrounds",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "data",
         "to": "data",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "mac": {
@@ -73,7 +77,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ]
     },
@@ -81,7 +88,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icon.png"
@@ -90,7 +99,9 @@
       "target": [
         {
           "target": "AppImage",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "category": "Education",

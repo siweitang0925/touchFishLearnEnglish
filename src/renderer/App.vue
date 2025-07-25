@@ -81,6 +81,7 @@ export default {
     const startingStudy = ref(false)
     const stoppingStudy = ref(false)
     const mainLayout = ref(null)
+    const cardOpacity = ref(0.9)
 
     // 计算属性
     const isReviewMode = computed(() => route.name === 'Review')
@@ -123,6 +124,26 @@ export default {
       }
     }
 
+    const handleCardOpacityChange = (event) => {
+      const { opacity } = event.detail
+      cardOpacity.value = opacity
+      console.log('卡片透明度已更新:', opacity)
+      
+      // 应用透明度到所有内容卡片
+      applyCardOpacity(opacity)
+    }
+
+    const applyCardOpacity = (opacity) => {
+      // 只针对主界面背景框的下一级内容框应用透明度
+      // 即 .app-main 下的 .page-container
+      const pageContainers = document.querySelectorAll('.app-main .page-container')
+      
+      pageContainers.forEach(container => {
+        container.style.opacity = opacity
+        container.style.transition = 'opacity 0.3s ease'
+      })
+    }
+
     const startStudyMode = async () => {
       startingStudy.value = true
       try {
@@ -162,6 +183,18 @@ export default {
     onMounted(async () => {
       console.log('=== APP TRACE: Vue app mounted, starting initialization ===')
       const appStartTime = Date.now()
+      
+      // 加载透明度设置
+      const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}')
+      cardOpacity.value = settings.cardOpacity || 0.9
+      
+      // 监听透明度变化事件
+      document.addEventListener('cardOpacityChange', handleCardOpacityChange)
+      
+      // 初始化时应用透明度设置
+      setTimeout(() => {
+        applyCardOpacity(cardOpacity.value)
+      }, 100)
       
       try {
         // 初始化图片存储系统
@@ -253,6 +286,7 @@ export default {
       // 清理事件监听器
       window.electronAPI.removeAllListeners('show-review-window')
       window.electronAPI.removeAllListeners('create-review-window')
+      document.removeEventListener('cardOpacityChange', handleCardOpacityChange)
     })
 
     return {
@@ -261,6 +295,7 @@ export default {
       startingStudy,
       stoppingStudy,
       mainLayout,
+      cardOpacity,
       startStudyMode,
       stopStudyMode
     }
@@ -398,6 +433,11 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   transition: background 0.5s ease-in-out;
+}
+
+/* 内容卡片透明度样式 */
+.app-main .page-container {
+  transition: opacity 0.3s ease;
 }
 
 /* 响应式设计 */

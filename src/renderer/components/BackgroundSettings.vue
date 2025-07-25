@@ -53,6 +53,39 @@
             </div>
           </div>
 
+          <!-- 主界面透明度设置 -->
+          <div class="control-section">
+            <div class="control-item">
+              <label class="control-label">主界面透明度</label>
+              <div class="opacity-control">
+                <input 
+                  type="range" 
+                  v-model="cardOpacity" 
+                  @input="updateCardOpacity"
+                  min="0.1" 
+                  max="1" 
+                  step="0.01"
+                  class="opacity-slider"
+                >
+                <span class="opacity-value">{{ Math.round(cardOpacity * 100) }}%</span>
+              </div>
+            </div>
+            <div class="control-item">
+              <label class="control-label">预览效果</label>
+              <div class="opacity-preview">
+                <div 
+                  class="preview-card"
+                  :style="{ opacity: cardOpacity }"
+                >
+                  <div class="preview-content">
+                    <h4>主界面预览</h4>
+                    <p>这是主界面内容区域的透明度预览效果</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
               <!-- 当前背景显示 -->
     <div class="current-background">
       <h4>当前背景</h4>
@@ -231,6 +264,7 @@ export default {
     // 响应式状态
     const autoSwitchEnabled = ref(false)
     const switchInterval = ref(10)
+    const cardOpacity = ref(0.9)
     const backgrounds = ref([])
     const currentBackground = ref({})
     
@@ -303,12 +337,14 @@ export default {
       const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}')
       autoSwitchEnabled.value = settings.autoSwitchEnabled || false
       switchInterval.value = settings.switchInterval || 10
+      cardOpacity.value = settings.cardOpacity || 0.9
     }
 
     const saveSettings = () => {
       const settings = {
         autoSwitchEnabled: autoSwitchEnabled.value,
-        switchInterval: switchInterval.value
+        switchInterval: switchInterval.value,
+        cardOpacity: cardOpacity.value
       }
       localStorage.setItem('backgroundSettings', JSON.stringify(settings))
     }
@@ -325,6 +361,16 @@ export default {
     const updateSwitchInterval = () => {
       backgroundManager.setSwitchInterval(switchInterval.value * 1000)
       saveSettings()
+    }
+
+    const updateCardOpacity = () => {
+      // 保存设置
+      saveSettings()
+      
+      // 触发自定义事件，通知其他组件更新透明度
+      document.dispatchEvent(new CustomEvent('cardOpacityChange', {
+        detail: { opacity: cardOpacity.value }
+      }))
     }
 
     const switchToBackground = (backgroundId) => {
@@ -506,6 +552,7 @@ export default {
       showModal,
       autoSwitchEnabled,
       switchInterval,
+      cardOpacity,
       backgrounds,
       currentBackground,
       newBackground,
@@ -516,6 +563,7 @@ export default {
       closeModal,
       toggleAutoSwitch,
       updateSwitchInterval,
+      updateCardOpacity,
       switchToBackground,
       removeBackground,
       addCustomBackground,
@@ -719,6 +767,85 @@ export default {
   border-radius: 4px;
   text-align: center;
   font-size: 14px;
+}
+
+/* 透明度控制样式 */
+.opacity-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.opacity-slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #e9ecef;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.opacity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4361ee;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.opacity-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4361ee;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.opacity-value {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 600;
+  color: #4361ee;
+  font-size: 14px;
+}
+
+.opacity-preview {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.preview-card {
+  width: 200px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  transition: opacity 0.3s ease;
+}
+
+.preview-content {
+  padding: 16px;
+}
+
+.preview-content h4 {
+  margin: 0 0 8px 0;
+  color: #2b2d42;
+  font-size: 14px;
+}
+
+.preview-content p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .current-background {

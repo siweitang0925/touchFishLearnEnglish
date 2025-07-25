@@ -86,11 +86,19 @@ export default {
     const canSubmit = computed(() => selectedOption.value && !showResult.value)
 
     // 方法
-    const initializeReview = () => {
+    const initializeReview = async () => {
       console.log('=== REVIEW PAGE TRACE: Initializing review ===')
       console.log('Initialize review called at:', new Date().toLocaleString())
       
       try {
+        // 确保单词数据已加载
+        console.log('=== REVIEW PAGE TRACE: Step 0 - Loading word data ===')
+        if (wordStore.words.length === 0) {
+          console.log('Word store is empty, loading words...')
+          await wordStore.loadWords()
+        }
+        console.log('Word store loaded, word count:', wordStore.words.length)
+        
         // 从URL参数获取单词数据
         console.log('=== REVIEW PAGE TRACE: Step 1 - Getting word parameter ===')
         const wordParam = route.query.word
@@ -126,6 +134,7 @@ export default {
         console.log('=== REVIEW PAGE TRACE: Step 4 - Generating options ===')
         const allMeanings = wordStore.words.map(word => word.meaning)
         console.log('Available meanings count:', allMeanings.length)
+        console.log('Sample meanings:', allMeanings.slice(0, 5))
         options.value = generateRandomOptions(currentWord.value.meaning, allMeanings, 6)
         console.log('Generated options count:', options.value.length)
         console.log('Generated options:', options.value)

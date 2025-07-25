@@ -47,13 +47,18 @@
     "directories": {
       "output": "release"
     },
+    "npmRebuild": false,
+    "buildDependenciesFromSource": false,
     "files": [
       "dist/**/*",
       "node_modules/**/*",
       "src/main/**/*",
       "src/shared/**/*",
       "assets/**/*",
-      "data/**/*"
+      "data/**/*",
+      "!node_modules/sqlite3/build/Release/obj/**/*",
+      "!node_modules/sqlite3/build/Release/.deps/**/*",
+      "!node_modules/sqlite3/build/Release/obj.target/**/*"
     ],
     "extraResources": [
       {

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>透明度功能测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+        }
+        
+        .opacity-control {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .opacity-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .opacity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4361ee;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .opacity-value {
+            font-weight: bold;
+            color: #4361ee;
+            margin-left: 10px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>透明度功能测试</h1>
+        
+        <div class="opacity-control">
+            <h3>透明度控制</h3>
+            <div class="control-group">
+                <label>主界面透明度:</label>
+                <input type="range" id="opacitySlider" min="0.1" max="1" step="0.01" value="0.9" class="opacity-slider">
+                <span id="opacityValue" class="opacity-value">90%</span>
+            </div>
+        </div>
+        
+        <div class="test-card" id="testCard1">
+            <h3>主界面内容区域 1</h3>
+            <p>这是主界面内容区域，用于验证透明度功能是否正常工作。</p>
+            <p>当你调整透明度滑块时，这个区域的透明度应该会相应变化。</p>
+        </div>
+        
+        <div class="test-card" id="testCard2">
+            <h3>主界面内容区域 2</h3>
+            <p>这是另一个主界面内容区域，同样应该受到透明度控制的影响。</p>
+            <p>背景图片应该透过半透明的区域显示出来。</p>
+        </div>
+        
+        <div class="test-card" id="testCard3">
+            <h3>主界面内容区域 3</h3>
+            <p>第三个主界面内容区域，用于验证多个元素都能正确应用透明度设置。</p>
+            <p>所有区域都应该有相同的透明度效果。</p>
+        </div>
+    </div>
+    
+    <script>
+        const opacitySlider = document.getElementById('opacitySlider');
+        const opacityValue = document.getElementById('opacityValue');
+        const testCards = document.querySelectorAll('.test-card');
+        
+        // 更新透明度显示
+        function updateOpacityDisplay() {
+            const opacity = opacitySlider.value;
+            const percentage = Math.round(opacity * 100);
+            opacityValue.textContent = percentage + '%';
+            
+            // 应用透明度到所有测试卡片
+            testCards.forEach(card => {
+                card.style.opacity = opacity;
+            });
+        }
+        
+        // 监听滑块变化
+        opacitySlider.addEventListener('input', updateOpacityDisplay);
+        
+        // 初始化显示
+        updateOpacityDisplay();
+        
+        // 模拟保存到localStorage
+        opacitySlider.addEventListener('change', function() {
+            const settings = {
+                cardOpacity: parseFloat(this.value)
+            };
+            localStorage.setItem('backgroundSettings', JSON.stringify(settings));
+            console.log('透明度设置已保存:', settings);
+        });
+        
+        // 从localStorage加载设置
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}');
+            if (settings.cardOpacity) {
+                opacitySlider.value = settings.cardOpacity;
+                updateOpacityDisplay();
+            }
+        }
+        
+        // 页面加载时恢复设置
+        loadSettings();
+    </script>
+</body>
+</html> 

@@ -12,6 +12,12 @@ export const useStudyStore = defineStore('study', () => {
     totalWrong: 0,
     accuracy: 0
   })
+  const detailedStats = ref({
+    todayReviews: 0,
+    weekReviews: 0,
+    monthReviews: 0,
+    studyDays: 0
+  })
   const loadingStats = ref(false)
 
   // 计算属性
@@ -43,6 +49,19 @@ export const useStudyStore = defineStore('study', () => {
       } else {
         console.error('加载学习统计失败:', result.message)
       }
+      
+      // 加载详细统计
+      const detailedResult = await window.electronAPI.getDetailedStudyStats()
+      if (detailedResult.success) {
+        detailedStats.value = {
+          todayReviews: detailedResult.stats.todayReviews || 0,
+          weekReviews: detailedResult.stats.weekReviews || 0,
+          monthReviews: detailedResult.stats.monthReviews || 0,
+          studyDays: detailedResult.stats.studyDays || 0
+        }
+      } else {
+        console.error('加载详细学习统计失败:', detailedResult.message)
+      }
     } catch (error) {
       console.error('加载学习统计出错:', error)
     } finally {
@@ -58,6 +77,7 @@ export const useStudyStore = defineStore('study', () => {
     // 状态
     isStudyModeActive,
     studyStats,
+    detailedStats,
     loadingStats,
     
     // 计算属性

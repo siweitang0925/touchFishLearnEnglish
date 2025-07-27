@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景透明度测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .word-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .word-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2b2d42;
+            margin-bottom: 10px;
+        }
+        
+        .meaning {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .opacity-control {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .opacity-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .opacity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4361ee;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .opacity-value {
+            font-weight: bold;
+            color: #4361ee;
+            margin-left: 10px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 120px;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>背景透明度测试</h1>
+        
+        <div class="opacity-control">
+            <h3>透明度控制</h3>
+            <div class="control-group">
+                <label>页面背景透明度:</label>
+                <input type="range" id="opacitySlider" min="0.1" max="1" step="0.01" value="0.9" class="opacity-slider">
+                <span id="opacityValue" class="opacity-value">90%</span>
+            </div>
+            <p>调整滑块可以看到页面背景的透明度变化，但单词卡片保持不透明。</p>
+        </div>
+        
+        <div class="page-container" id="pageContainer">
+            <h2>页面内容区域</h2>
+            <p>这是页面容器，背景透明度会在这里体现。</p>
+            
+            <div class="word-card">
+                <div class="word-text">academic</div>
+                <div class="meaning">学术的</div>
+            </div>
+            
+            <div class="word-card">
+                <div class="word-text">accomplish</div>
+                <div class="meaning">完成</div>
+            </div>
+            
+            <div class="word-card">
+                <div class="word-text">accurate</div>
+                <div class="meaning">准确的</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const opacitySlider = document.getElementById('opacitySlider');
+        const opacityValue = document.getElementById('opacityValue');
+        const pageContainer = document.getElementById('pageContainer');
+        
+        // 更新透明度显示
+        function updateOpacityDisplay() {
+            const opacity = opacitySlider.value;
+            const percentage = Math.round(opacity * 100);
+            opacityValue.textContent = percentage + '%';
+            
+            // 应用透明度到页面容器的背景
+            const currentBackground = pageContainer.style.background || 'rgba(255, 255, 255, 0.9)';
+            
+            // 如果是rgba背景，调整alpha值
+            if (currentBackground.includes('rgba')) {
+                const rgbaMatch = currentBackground.match(/rgba\(([^)]+)\)/);
+                if (rgbaMatch) {
+                    const rgbValues = rgbaMatch[1].split(',').map(v => v.trim());
+                    const newBackground = `rgba(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]}, ${opacity})`;
+                    pageContainer.style.background = newBackground;
+                }
+            } else {
+                // 如果不是rgba，转换为rgba并设置透明度
+                pageContainer.style.background = `rgba(255, 255, 255, ${opacity})`;
+            }
+        }
+        
+        // 监听滑块变化
+        opacitySlider.addEventListener('input', updateOpacityDisplay);
+        
+        // 初始化显示
+        updateOpacityDisplay();
+        
+        // 模拟保存到localStorage
+        opacitySlider.addEventListener('change', function() {
+            const settings = {
+                cardOpacity: parseFloat(this.value)
+            };
+            localStorage.setItem('backgroundSettings', JSON.stringify(settings));
+            console.log('透明度设置已保存:', settings);
+        });
+        
+        // 从localStorage加载设置
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}');
+            if (settings.cardOpacity) {
+                opacitySlider.value = settings.cardOpacity;
+                updateOpacityDisplay();
+            }
+        }
+        
+        // 页面加载时恢复设置
+        loadSettings();
+    </script>
+</body>
+</html> 

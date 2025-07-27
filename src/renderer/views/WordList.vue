@@ -166,13 +166,13 @@
 
             <div class="form-group">
               <label class="form-label">中文含义 *</label>
-              <input 
+              <textarea 
                 v-model="formData.meaning" 
-                type="text" 
-                class="form-input" 
-                placeholder="输入中文含义"
+                class="form-textarea" 
+                rows="3" 
+                placeholder="输入中文含义，支持换行"
                 required
-              >
+              ></textarea>
             </div>
 
             <div class="form-group">
@@ -359,8 +359,8 @@ export default {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   padding: 20px;
-  backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* 毛玻璃效果将通过JavaScript动态控制 */
 }
 
 /* 页面头部 */
@@ -630,6 +630,10 @@ export default {
   margin-bottom: 15px;
   font-size: 16px;
   line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .example {

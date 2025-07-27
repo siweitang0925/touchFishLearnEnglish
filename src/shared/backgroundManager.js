@@ -53,6 +53,7 @@ class BackgroundManager {
   init() {
     this.loadCustomBackgrounds()
     this.loadMode()
+    this.loadAutoSwitchSettings()
     // 确保使用系统预设背景作为默认
     this.currentIndex = 0
     // 触发初始背景事件，让事件系统处理背景应用
@@ -112,6 +113,25 @@ class BackgroundManager {
       console.log('保存模式设置:', this.mode)
     } catch (error) {
       console.error('保存模式设置失败:', error)
+    }
+  }
+
+  /**
+   * 加载自动切换设置
+   */
+  loadAutoSwitchSettings() {
+    try {
+      const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}')
+      if (settings.autoSwitchEnabled !== undefined) {
+        this.isEnabled = settings.autoSwitchEnabled
+        console.log('加载自动切换设置:', this.isEnabled)
+      }
+      if (settings.switchInterval) {
+        this.switchInterval = settings.switchInterval * 1000 // 转换为毫秒
+        console.log('加载切换间隔设置:', this.switchInterval)
+      }
+    } catch (error) {
+      console.error('加载自动切换设置失败:', error)
     }
   }
 
@@ -305,6 +325,7 @@ class BackgroundManager {
     if (this.isEnabled) return
     
     this.isEnabled = true
+    console.log('启动自动切换，间隔:', this.switchInterval, 'ms')
     this.interval = setInterval(() => {
       this.nextBackground()
     }, this.switchInterval)

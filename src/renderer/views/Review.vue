@@ -428,6 +428,7 @@ export default {
   hyphens: auto;
   max-width: 100%;
   display: block;
+  white-space: pre-wrap;
 }
 
 .result-icon {
@@ -511,6 +512,7 @@ export default {
 
   .option-text {
     font-size: 15px;
+    white-space: pre-wrap;
   }
 }
 
@@ -555,6 +557,7 @@ export default {
 
   .option-text {
     font-size: 14px;
+    white-space: pre-wrap;
   }
 }
 </style> 

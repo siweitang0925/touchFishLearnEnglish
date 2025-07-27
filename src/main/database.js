@@ -554,6 +554,41 @@ class Database {
   }
 
   /**
+   * 获取详细学习统计
+   */
+  async getDetailedStudyStats() {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const weekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    const sql = `
+      SELECT 
+        COUNT(*) as totalWords,
+        SUM(CASE WHEN proficiency >= 5 THEN 1 ELSE 0 END) as masteredWords,
+        SUM(reviewCount) as totalReviews,
+        SUM(correctCount) as totalCorrect,
+        SUM(wrongCount) as totalWrong,
+        SUM(CASE WHEN date(lastReviewTime) = ? THEN 1 ELSE 0 END) as todayReviews,
+        SUM(CASE WHEN date(lastReviewTime) >= date(?) THEN 1 ELSE 0 END) as weekReviews,
+        SUM(CASE WHEN date(lastReviewTime) >= date(?) THEN 1 ELSE 0 END) as monthReviews,
+        COUNT(DISTINCT date(lastReviewTime)) as studyDays
+      FROM words
+    `;
+
+    return new Promise((resolve, reject) => {
+      this.db.get(sql, [todayStr, weekStart.toISOString().split('T')[0], monthStart.toISOString().split('T')[0]], (err, row) => {
+        if (err) {
+          console.error('获取详细学习统计失败:', err);
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+  }
+
+  /**
    * 清空所有数据
    */
   async clearAllData() {

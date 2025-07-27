@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // 学习统计
   getStudyStats: () => ipcRenderer.invoke('get-study-stats'),
+  getDetailedStudyStats: () => ipcRenderer.invoke('get-detailed-study-stats'),
 
   // 事件监听器
   onShowReviewWindow: (callback) => {

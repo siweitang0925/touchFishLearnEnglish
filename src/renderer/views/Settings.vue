@@ -346,8 +346,8 @@ export default {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   padding: 20px;
-  backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* 毛玻璃效果将通过JavaScript动态控制 */
 }
 
 .page-header {

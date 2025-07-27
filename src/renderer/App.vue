@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useWordStore } from './store/wordStore.js'
 import { useStudyStore } from './store/studyStore.js'
@@ -82,6 +82,7 @@ export default {
     const stoppingStudy = ref(false)
     const mainLayout = ref(null)
     const cardOpacity = ref(0.9)
+    const blurEffectEnabled = ref(false) // 新增毛玻璃效果开关
 
     // 计算属性
     const isReviewMode = computed(() => route.name === 'Review')
@@ -133,14 +134,52 @@ export default {
       applyCardOpacity(opacity)
     }
 
+    const handleBlurEffectChange = (event) => {
+      const { enabled } = event.detail
+      blurEffectEnabled.value = enabled
+      console.log('毛玻璃效果已更新:', enabled)
+      
+      // 应用毛玻璃效果到所有内容卡片
+      applyBlurEffect(enabled)
+    }
+
     const applyCardOpacity = (opacity) => {
       // 只针对主界面背景框的下一级内容框应用透明度
       // 即 .app-main 下的 .page-container
       const pageContainers = document.querySelectorAll('.app-main .page-container')
       
       pageContainers.forEach(container => {
-        container.style.opacity = opacity
-        container.style.transition = 'opacity 0.3s ease'
+        // 不直接设置opacity，而是调整背景的透明度
+        // 保持内容元素不透明
+        const currentBackground = container.style.background || 'rgba(255, 255, 255, 0.9)'
+        
+        // 如果是rgba背景，调整alpha值
+        if (currentBackground.includes('rgba')) {
+          const rgbaMatch = currentBackground.match(/rgba\(([^)]+)\)/)
+          if (rgbaMatch) {
+            const rgbValues = rgbaMatch[1].split(',').map(v => v.trim())
+            const newBackground = `rgba(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]}, ${opacity})`
+            container.style.background = newBackground
+          }
+        } else {
+          // 如果不是rgba，转换为rgba并设置透明度
+          container.style.background = `rgba(255, 255, 255, ${opacity})`
+        }
+        
+        container.style.transition = 'background 0.3s ease'
+      })
+    }
+
+    const applyBlurEffect = (enabled) => {
+      const pageContainers = document.querySelectorAll('.app-main .page-container')
+      pageContainers.forEach(container => {
+        if (enabled) {
+          container.style.backdropFilter = 'blur(10px)'
+          container.style.WebkitBackdropFilter = 'blur(10px)'
+        } else {
+          container.style.backdropFilter = 'none'
+          container.style.WebkitBackdropFilter = 'none'
+        }
       })
     }
 
@@ -187,13 +226,16 @@ export default {
       // 加载透明度设置
       const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}')
       cardOpacity.value = settings.cardOpacity || 0.9
+      blurEffectEnabled.value = settings.blurEffectEnabled || false
       
       // 监听透明度变化事件
       document.addEventListener('cardOpacityChange', handleCardOpacityChange)
+      document.addEventListener('blurEffectChange', handleBlurEffectChange)
       
       // 初始化时应用透明度设置
       setTimeout(() => {
         applyCardOpacity(cardOpacity.value)
+        applyBlurEffect(blurEffectEnabled.value)
       }, 100)
       
       try {
@@ -217,69 +259,30 @@ export default {
         console.log('Start loading word data...')
         await wordStore.loadWords()
       
-        // 检查是否需要初始化雅思词汇（仅在首次启动时自动初始化）
-        if (wordStore.words.length === 0 && !wordStore.initialized) {
-          console.log('=== APP TRACE: Word list is empty and not initialized, auto-initializing IELTS words ===')
-          try {
-            const result = await wordStore.initIeltsWords()
-            if (result.success) {
-              console.log('=== APP TRACE: IELTS words auto-initialization successful ===')
-            } else {
-              console.error('=== APP TRACE: IELTS words auto-initialization failed ===')
-              console.error('Error:', result.message)
-            }
-          } catch (error) {
-            console.error('=== APP TRACE: IELTS words auto-initialization error ===')
-            console.error('Error:', error)
-          }
-        } else {
-          console.log('=== APP TRACE: Skipping auto-initialization ===')
-          console.log('Word count:', wordStore.words.length)
-          console.log('Initialized:', wordStore.initialized)
-        }
-        
-        // 检查学习模式状态
-        const status = await window.electronAPI.getSchedulerStatus()
-        studyStore.setStudyModeActive(status.isRunning)
+        console.log('=== APP TRACE: Initialization completed in', Date.now() - appStartTime, 'ms ===')
       } catch (error) {
         console.error('数据初始化失败:', error)
       }
-      
-      // 设置复习窗口监听器
-      window.electronAPI.onCreateReviewWindow((data) => {
-        console.log('=== APP TRACE: Received create review window request ===')
-        console.log('App received IPC message at:', new Date().toLocaleString())
-        console.log('Word data:', data.word)
-        console.log('Word data type:', typeof data.word)
-        console.log('Word data keys:', Object.keys(data.word || {}))
-        
-        // 跳转到复习页面
-        const wordParam = encodeURIComponent(JSON.stringify(data.word))
-        const reviewHash = `/review?word=${wordParam}`
-        console.log('=== APP TRACE: Navigating to review page ===')
-        console.log('Review hash:', reviewHash)
-        console.log('Word parameter length:', wordParam.length)
-        window.location.hash = reviewHash
-        console.log('=== APP TRACE: Navigation completed ===')
-      })
-      
-      // 监听学习模式状态变化
-          window.electronAPI.onStudyModeStatusChanged((data) => {
-      console.log('=== APP TRACE: Received study mode status change ===')
-      console.log('Study mode status:', data.isRunning)
-      studyStore.setStudyModeActive(data.isRunning)
     })
 
-    // 监听刷新单词列表的请求
-    window.electronAPI.onRefreshWords(() => {
-      console.log('=== APP TRACE: Received refresh words request ===')
-      wordStore.refreshWords()
-    })
-      
-      const appEndTime = Date.now()
-      const appDuration = appEndTime - appStartTime
-      console.log('=== APP TRACE: App initialization completed ===')
-      console.log('App initialization total time:', appDuration, 'ms')
+    // 监听路由变化，重新应用背景设置
+    watch(() => route.name, (newRoute, oldRoute) => {
+      if (newRoute && newRoute !== oldRoute) {
+        console.log('路由切换:', oldRoute, '->', newRoute)
+        
+        // 延迟重新应用背景，确保DOM已更新
+        setTimeout(() => {
+          // 重新应用当前背景
+          const currentBackground = backgroundManager.getCurrentBackground()
+          if (currentBackground) {
+            handleBackgroundChange({ detail: { background: currentBackground } })
+          }
+          
+          // 重新应用透明度设置
+          applyCardOpacity(cardOpacity.value)
+          applyBlurEffect(blurEffectEnabled.value)
+        }, 100)
+      }
     })
 
     onUnmounted(() => {
@@ -287,6 +290,7 @@ export default {
       window.electronAPI.removeAllListeners('show-review-window')
       window.electronAPI.removeAllListeners('create-review-window')
       document.removeEventListener('cardOpacityChange', handleCardOpacityChange)
+      document.removeEventListener('blurEffectChange', handleBlurEffectChange)
     })
 
     return {
@@ -296,6 +300,7 @@ export default {
       stoppingStudy,
       mainLayout,
       cardOpacity,
+      blurEffectEnabled,
       startStudyMode,
       stopStudyMode
     }
@@ -437,7 +442,7 @@ export default {
 
 /* 内容卡片透明度样式 */
 .app-main .page-container {
-  transition: opacity 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 /* 响应式设计 */

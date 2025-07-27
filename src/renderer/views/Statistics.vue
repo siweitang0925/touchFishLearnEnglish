@@ -99,22 +99,22 @@
             <div class="stats-grid">
               <div class="detail-stat">
                 <div class="detail-label">今日复习</div>
-                <div class="detail-value">{{ todayReviews }}</div>
+                <div class="detail-value">{{ studyStore.detailedStats.todayReviews }}</div>
               </div>
               
               <div class="detail-stat">
                 <div class="detail-label">本周复习</div>
-                <div class="detail-value">{{ weekReviews }}</div>
+                <div class="detail-value">{{ studyStore.detailedStats.weekReviews }}</div>
               </div>
               
               <div class="detail-stat">
                 <div class="detail-label">本月复习</div>
-                <div class="detail-value">{{ monthReviews }}</div>
+                <div class="detail-value">{{ studyStore.detailedStats.monthReviews }}</div>
               </div>
               
               <div class="detail-stat">
                 <div class="detail-label">学习天数</div>
-                <div class="detail-value">{{ studyDays }}</div>
+                <div class="detail-value">{{ studyStore.detailedStats.studyDays }}</div>
               </div>
             </div>
           </div>
@@ -133,36 +133,70 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useStudyStore } from '../store/studyStore.js'
 
 export default {
   name: 'Statistics',
   setup() {
     const studyStore = useStudyStore()
-
-    // 模拟数据（实际应该从数据库获取）
-    const todayReviews = ref(12)
-    const weekReviews = ref(45)
-    const monthReviews = ref(180)
-    const studyDays = ref(15)
+    const route = useRoute()
+    
+    // 自动刷新定时器
+    let autoRefreshTimer = null
 
     // 方法
     const refreshStats = async () => {
       await studyStore.refreshStats()
     }
 
+    // 启动自动刷新
+    const startAutoRefresh = () => {
+      // 每30秒自动刷新一次
+      autoRefreshTimer = setInterval(async () => {
+        if (route.name === 'Statistics') {
+          console.log('自动刷新统计数据...')
+          await studyStore.loadStudyStats()
+        }
+      }, 30000) // 30秒
+    }
+
+    // 停止自动刷新
+    const stopAutoRefresh = () => {
+      if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer)
+        autoRefreshTimer = null
+      }
+    }
+
+    // 监听路由变化
+    watch(() => route.name, (newRoute) => {
+      if (newRoute === 'Statistics') {
+        // 进入统计页面时启动自动刷新
+        startAutoRefresh()
+        // 立即刷新一次数据
+        studyStore.loadStudyStats()
+      } else {
+        // 离开统计页面时停止自动刷新
+        stopAutoRefresh()
+      }
+    })
+
     // 生命周期
     onMounted(async () => {
       await studyStore.loadStudyStats()
+      // 启动自动刷新
+      startAutoRefresh()
+    })
+
+    onUnmounted(() => {
+      // 清理定时器
+      stopAutoRefresh()
     })
 
     return {
       studyStore,
-      todayReviews,
-      weekReviews,
-      monthReviews,
-      studyDays,
       refreshStats
     }
   }
@@ -183,8 +217,8 @@ export default {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   padding: 20px;
-  backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* 毛玻璃效果将通过JavaScript动态控制 */
 }
 
 .page-header {

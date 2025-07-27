@@ -338,6 +338,35 @@ class StudyScheduler {
   }
 
   /**
+   * 获取详细学习统计
+   */
+  async getDetailedStudyStats() {
+    try {
+      const stats = await database.getDetailedStudyStats()
+      return {
+        success: true,
+        stats: {
+          totalWords: stats.totalWords || 0,
+          masteredWords: stats.masteredWords || 0,
+          totalReviews: stats.totalReviews || 0,
+          totalCorrect: stats.totalCorrect || 0,
+          totalWrong: stats.totalWrong || 0,
+          accuracy: stats.totalReviews > 0 
+            ? Math.round((stats.totalCorrect / stats.totalReviews) * 100) 
+            : 0,
+          todayReviews: stats.todayReviews || 0,
+          weekReviews: stats.weekReviews || 0,
+          monthReviews: stats.monthReviews || 0,
+          studyDays: stats.studyDays || 0
+        }
+      }
+    } catch (error) {
+      console.error('获取详细学习统计失败:', error)
+      return { success: false, message: '获取详细统计失败: ' + error.message }
+    }
+  }
+
+  /**
    * 检查应用启动时的状态
    */
   async checkStartupStatus() {

@@ -433,6 +433,11 @@ class MainProcess {
       return await Scheduler.getStudyStats()
     })
 
+    // 获取详细学习统计
+    ipcMain.handle('get-detailed-study-stats', async () => {
+      return await Scheduler.getDetailedStudyStats()
+    })
+
     // 启动学习模式
     ipcMain.handle('start-study-mode', async () => {
       console.log('=== IPC TRACE: Received start study mode request ===')

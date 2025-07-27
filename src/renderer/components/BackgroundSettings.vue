@@ -71,15 +71,34 @@
               </div>
             </div>
             <div class="control-item">
+              <label class="control-label">毛玻璃效果</label>
+              <div class="toggle-container">
+                <input 
+                  type="checkbox" 
+                  id="blurEffect" 
+                  v-model="blurEffectEnabled"
+                  @change="updateBlurEffect"
+                  class="toggle-input"
+                >
+                <label for="blurEffect" class="toggle-label"></label>
+              </div>
+            </div>
+            <div class="control-item">
               <label class="control-label">预览效果</label>
               <div class="opacity-preview">
                 <div 
                   class="preview-card"
-                  :style="{ opacity: cardOpacity }"
+                  :style="{ 
+                    opacity: cardOpacity,
+                    backdropFilter: blurEffectEnabled ? 'blur(10px)' : 'none',
+                    WebkitBackdropFilter: blurEffectEnabled ? 'blur(10px)' : 'none'
+                  }"
                 >
                   <div class="preview-content">
                     <h4>主界面预览</h4>
                     <p>这是主界面内容区域的透明度预览效果</p>
+                    <p v-if="blurEffectEnabled" style="color: #4361ee; font-size: 12px;">毛玻璃效果已启用</p>
+                    <p v-else style="color: #6c757d; font-size: 12px;">毛玻璃效果已禁用</p>
                   </div>
                 </div>
               </div>
@@ -265,6 +284,7 @@ export default {
     const autoSwitchEnabled = ref(false)
     const switchInterval = ref(10)
     const cardOpacity = ref(0.9)
+    const blurEffectEnabled = ref(false) // 新增毛玻璃效果开关
     const backgrounds = ref([])
     const currentBackground = ref({})
     
@@ -338,13 +358,15 @@ export default {
       autoSwitchEnabled.value = settings.autoSwitchEnabled || false
       switchInterval.value = settings.switchInterval || 10
       cardOpacity.value = settings.cardOpacity || 0.9
+      blurEffectEnabled.value = settings.blurEffectEnabled || false // 加载毛玻璃效果设置
     }
 
     const saveSettings = () => {
       const settings = {
         autoSwitchEnabled: autoSwitchEnabled.value,
         switchInterval: switchInterval.value,
-        cardOpacity: cardOpacity.value
+        cardOpacity: cardOpacity.value,
+        blurEffectEnabled: blurEffectEnabled.value // 保存毛玻璃效果设置
       }
       localStorage.setItem('backgroundSettings', JSON.stringify(settings))
     }
@@ -370,6 +392,13 @@ export default {
       // 触发自定义事件，通知其他组件更新透明度
       document.dispatchEvent(new CustomEvent('cardOpacityChange', {
         detail: { opacity: cardOpacity.value }
+      }))
+    }
+
+    const updateBlurEffect = () => {
+      saveSettings()
+      document.dispatchEvent(new CustomEvent('blurEffectChange', {
+        detail: { enabled: blurEffectEnabled.value }
       }))
     }
 
@@ -553,6 +582,7 @@ export default {
       autoSwitchEnabled,
       switchInterval,
       cardOpacity,
+      blurEffectEnabled, // 暴露毛玻璃效果开关
       backgrounds,
       currentBackground,
       newBackground,
@@ -564,6 +594,7 @@ export default {
       toggleAutoSwitch,
       updateSwitchInterval,
       updateCardOpacity,
+      updateBlurEffect, // 暴露毛玻璃效果更新方法
       switchToBackground,
       removeBackground,
       addCustomBackground,

@@ -55,19 +55,24 @@ class BackgroundManager {
     this.loadMode()
     this.loadAutoSwitchSettings()
     
-    // 根据模式设置正确的初始背景索引
-    if (this.mode === 'system') {
-      // 系统预设模式：使用第一个系统预设背景
-      const systemBackgrounds = this.backgrounds.filter(bg => bg.id.startsWith('gradient-'))
-      if (systemBackgrounds.length > 0) {
-        this.currentIndex = this.backgrounds.findIndex(bg => bg.id === systemBackgrounds[0].id)
+    // 如果没有保存的背景索引，则根据模式设置默认背景索引
+    if (this.currentIndex === undefined || this.currentIndex < 0 || this.currentIndex >= this.backgrounds.length) {
+      if (this.mode === 'system') {
+        // 系统预设模式：使用第一个系统预设背景
+        const systemBackgrounds = this.backgrounds.filter(bg => bg.id.startsWith('gradient-'))
+        if (systemBackgrounds.length > 0) {
+          this.currentIndex = this.backgrounds.findIndex(bg => bg.id === systemBackgrounds[0].id)
+        }
+      } else if (this.mode === 'custom') {
+        // 自定义背景模式：使用第一个自定义背景
+        const customBackgrounds = this.backgrounds.filter(bg => !bg.id.startsWith('gradient-'))
+        if (customBackgrounds.length > 0) {
+          this.currentIndex = this.backgrounds.findIndex(bg => bg.id === customBackgrounds[0].id)
+        }
       }
-    } else if (this.mode === 'custom') {
-      // 自定义背景模式：使用第一个自定义背景
-      const customBackgrounds = this.backgrounds.filter(bg => !bg.id.startsWith('gradient-'))
-      if (customBackgrounds.length > 0) {
-        this.currentIndex = this.backgrounds.findIndex(bg => bg.id === customBackgrounds[0].id)
-      }
+      console.log('使用默认背景索引:', this.currentIndex)
+    } else {
+      console.log('使用保存的背景索引:', this.currentIndex)
     }
     
     // 触发初始背景事件，让事件系统处理背景应用
@@ -149,8 +154,27 @@ class BackgroundManager {
         this.switchInterval = settings.switchInterval * 1000 // 转换为毫秒
         console.log('加载切换间隔设置:', this.switchInterval)
       }
+      // 加载上次选择的背景索引
+      if (settings.lastBackgroundIndex !== undefined) {
+        this.currentIndex = settings.lastBackgroundIndex
+        console.log('加载上次选择的背景索引:', this.currentIndex)
+      }
     } catch (error) {
       console.error('加载自动切换设置失败:', error)
+    }
+  }
+
+  /**
+   * 保存背景设置
+   */
+  saveBackgroundSettings() {
+    try {
+      const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}')
+      settings.lastBackgroundIndex = this.currentIndex
+      localStorage.setItem('backgroundSettings', JSON.stringify(settings))
+      console.log('保存背景索引:', this.currentIndex)
+    } catch (error) {
+      console.error('保存背景设置失败:', error)
     }
   }
 
@@ -233,6 +257,9 @@ class BackgroundManager {
       this.currentIndex = this.backgrounds.findIndex(bg => bg.id === nextBackground.id)
     }
     
+    // 保存当前背景索引
+    this.saveBackgroundSettings()
+    
     // 触发背景切换事件
     this.emitBackgroundChange(this.getCurrentBackground())
   }
@@ -284,6 +311,8 @@ class BackgroundManager {
     const index = this.backgrounds.findIndex(bg => bg.id === backgroundId)
     if (index !== -1) {
       this.currentIndex = index
+      // 保存当前背景索引
+      this.saveBackgroundSettings()
       // 不传递元素参数，让事件系统处理背景应用
       this.emitBackgroundChange(this.getCurrentBackground())
       return true

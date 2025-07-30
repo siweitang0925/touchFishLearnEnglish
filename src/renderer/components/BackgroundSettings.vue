@@ -287,6 +287,7 @@ export default {
     const blurEffectEnabled = ref(false) // 新增毛玻璃效果开关
     const backgrounds = ref([])
     const currentBackground = ref({})
+    const currentMode = ref('system') // 添加响应式的模式状态
     
     const newBackground = ref({
       name: '',
@@ -334,7 +335,8 @@ export default {
     })
 
     const isSystemBackground = computed(() => {
-      return backgroundManager.getCurrentMode() === 'system'
+      console.log('当前模式:', currentMode.value, 'isSystemBackground:', currentMode.value === 'system')
+      return currentMode.value === 'system'
     })
 
     // 弹框方法
@@ -352,6 +354,10 @@ export default {
       // 加载背景列表
       backgrounds.value = backgroundManager.getAllBackgrounds()
       currentBackground.value = backgroundManager.getCurrentBackground()
+      
+      // 加载当前模式
+      currentMode.value = backgroundManager.getCurrentMode()
+      console.log('加载设置，当前模式:', currentMode.value)
       
       // 加载设置
       const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}')
@@ -485,14 +491,20 @@ export default {
     }
 
     const switchToSystemMode = () => {
+      console.log('点击系统预设按钮')
       backgroundManager.switchToSystemMode()
       currentBackground.value = backgroundManager.getCurrentBackground()
+      currentMode.value = 'system' // 更新响应式状态
+      console.log('切换到系统预设模式，当前模式:', currentMode.value)
     }
 
     const switchToCustomMode = () => {
+      console.log('点击自定义背景按钮')
       const success = backgroundManager.switchToCustomMode()
       if (success) {
         currentBackground.value = backgroundManager.getCurrentBackground()
+        currentMode.value = 'custom' // 更新响应式状态
+        console.log('切换到自定义背景模式，当前模式:', currentMode.value)
       } else {
         alert('请先添加自定义背景')
       }
@@ -572,9 +584,17 @@ export default {
       currentBackground.value = backgroundManager.getCurrentBackground()
     }
 
+    // 监听模式变化事件
+    const handleModeChange = (event) => {
+      const { mode } = event.detail
+      console.log('收到模式变化事件:', mode)
+      currentMode.value = mode // 更新响应式状态
+    }
+
     // 生命周期
     onMounted(() => {
       document.addEventListener('backgroundChange', handleBackgroundChange)
+      document.addEventListener('modeChange', handleModeChange)
     })
 
     return {

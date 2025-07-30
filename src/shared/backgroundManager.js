@@ -54,12 +54,31 @@ class BackgroundManager {
     this.loadCustomBackgrounds()
     this.loadMode()
     this.loadAutoSwitchSettings()
-    // 确保使用系统预设背景作为默认
-    this.currentIndex = 0
+    
+    // 根据模式设置正确的初始背景索引
+    if (this.mode === 'system') {
+      // 系统预设模式：使用第一个系统预设背景
+      const systemBackgrounds = this.backgrounds.filter(bg => bg.id.startsWith('gradient-'))
+      if (systemBackgrounds.length > 0) {
+        this.currentIndex = this.backgrounds.findIndex(bg => bg.id === systemBackgrounds[0].id)
+      }
+    } else if (this.mode === 'custom') {
+      // 自定义背景模式：使用第一个自定义背景
+      const customBackgrounds = this.backgrounds.filter(bg => !bg.id.startsWith('gradient-'))
+      if (customBackgrounds.length > 0) {
+        this.currentIndex = this.backgrounds.findIndex(bg => bg.id === customBackgrounds[0].id)
+      }
+    }
+    
     // 触发初始背景事件，让事件系统处理背景应用
     this.emitBackgroundChange(this.getCurrentBackground())
-    // 启动自动切换
-    this.startAutoSwitch()
+    
+    // 只有在启用自动切换时才启动
+    if (this.isEnabled) {
+      this.startAutoSwitch()
+    } else {
+      console.log('自动切换已禁用，不启动自动切换')
+    }
   }
 
   /**
@@ -322,10 +341,19 @@ class BackgroundManager {
    * 开始自动切换
    */
   startAutoSwitch() {
-    if (this.isEnabled) return
+    if (this.isEnabled && this.interval) {
+      console.log('自动切换已在运行中')
+      return
+    }
     
     this.isEnabled = true
     console.log('启动自动切换，间隔:', this.switchInterval, 'ms')
+    
+    // 清除可能存在的旧定时器
+    if (this.interval) {
+      clearInterval(this.interval)
+    }
+    
     this.interval = setInterval(() => {
       this.nextBackground()
     }, this.switchInterval)
@@ -394,6 +422,9 @@ class BackgroundManager {
       this.currentIndex = this.backgrounds.findIndex(bg => bg.id === systemBackgrounds[0].id)
       this.emitBackgroundChange(this.getCurrentBackground())
       console.log('已切换到系统预设模式')
+      
+      // 触发模式变化事件
+      this.emitModeChange('system')
       return true
     }
     return false
@@ -410,6 +441,9 @@ class BackgroundManager {
       this.currentIndex = this.backgrounds.findIndex(bg => bg.id === customBackgrounds[0].id)
       this.emitBackgroundChange(this.getCurrentBackground())
       console.log('已切换到自定义背景模式')
+      
+      // 触发模式变化事件
+      this.emitModeChange('custom')
       return true
     }
     return false
@@ -453,6 +487,20 @@ class BackgroundManager {
       document.dispatchEvent(event)
     } catch (error) {
       console.error('触发背景切换事件失败:', error)
+    }
+  }
+
+  /**
+   * 触发模式变化事件
+   */
+  emitModeChange(mode) {
+    try {
+      const event = new CustomEvent('modeChange', {
+        detail: { mode }
+      })
+      document.dispatchEvent(event)
+    } catch (error) {
+      console.error('触发模式变化事件失败:', error)
     }
   }
 

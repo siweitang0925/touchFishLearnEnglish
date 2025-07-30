@@ -229,26 +229,37 @@ export default {
 </script>
 
 <style scoped>
+
 .review-page {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  padding: 0; /* 移除padding，确保背景完全覆盖 */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   position: relative;
-  border-radius: 24px;
+  border-radius: 0; /* 移除CSS圆角，让系统圆角生效 */
   overflow: hidden;
   /* 确保整个窗口都有圆角 */
   -webkit-app-region: no-drag;
+  /* 确保背景完全覆盖 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* 确保背景延伸到边缘 */
+  margin: 0;
+  box-sizing: border-box;
+  /* 确保背景覆盖整个视口 */
+  min-height: 100vh;
+  width: 100vw;
 }
 
 .review-container {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px;
+  border-radius: var(--content-border-radius);
   padding: 40px;
   max-width: 800px;
   width: 100%;
@@ -257,6 +268,7 @@ export default {
     0 0 0 1px rgba(255, 255, 255, 0.2);
   text-align: center;
   border: none;
+  margin: 32px; /* 增加边距，确保不覆盖系统圆角 */
 }
 
 /* 自定义悬浮提示 */

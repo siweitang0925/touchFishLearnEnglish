@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "electron": "electron .",
-    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron-dev": "node scripts/start-dev.js",
     "electron-pack": "npm run build && electron-builder",
     "electron-pack-win": "npm run build && electron-builder --win",
     "electron-pack-mac": "npm run build && electron-builder --mac",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.4.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^10.0.0",
     "electron": "^24.8.8",
     "electron-builder": "^24.6.4",
     "sass": "^1.69.0",

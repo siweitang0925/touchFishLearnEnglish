@@ -103,12 +103,12 @@ class MainProcess {
 
     // 加载应用页面
     if (process.env.NODE_ENV === 'development') {
-      console.log('开发模式：加载 http://localhost:5173')
+      console.log('✅ 开发模式：加载 http://localhost:5173')
       this.mainWindow.loadURL('http://localhost:5173')
       // 开发模式下不自动打开开发者工具
     } else {
       const filePath = path.join(__dirname, '../../dist/renderer/index.html')
-      console.log('生产模式：加载文件', filePath)
+      console.log('❌ 生产模式：加载文件', filePath)
       this.mainWindow.loadFile(filePath)
       // 生产模式下不自动打开开发者工具
     }
@@ -175,6 +175,10 @@ class MainProcess {
 
     console.log('=== MAIN PROCESS TRACE: Step 1 - Creating BrowserWindow ===')
     console.log('Creating review window with dimensions: 500x600')
+    // 根据平台设置圆角配置
+    const isMac = process.platform === 'darwin'
+    const isWin = process.platform === 'win32'
+    
     this.reviewWindow = new BrowserWindow({
       width: 500,
       height: 600,
@@ -189,7 +193,8 @@ class MainProcess {
       frame: false, // 无边框
       titleBarStyle: 'hidden', // 隐藏标题栏
       transparent: true, // 透明背景
-      roundedCorners: true, // 启用圆角
+      roundedCorners: true, // 启用系统圆角
+      backgroundColor: '#00000000', // 设置窗口背景为完全透明，避免白色背景
       icon: appIcon, // 设置窗口图标
       webPreferences: {
         nodeIntegration: false,
@@ -197,7 +202,17 @@ class MainProcess {
         preload: path.join(__dirname, 'preload.js'),
         webSecurity: false // 允许加载本地文件
       },
-      show: false
+      show: false,
+      // macOS特定设置 - 优化圆角效果
+      ...(isMac && {
+        vibrancy: 'under-window',
+        visualEffectState: 'active',
+        titleBarStyle: 'hiddenInset' // 更好的圆角效果
+      }),
+      // Windows特定设置
+      ...(isWin && {
+        thickFrame: false
+      })
     })
     console.log('=== MAIN PROCESS TRACE: Step 1 completed - BrowserWindow created ===')
     console.log('Review window created successfully')

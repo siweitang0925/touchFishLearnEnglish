@@ -218,10 +218,24 @@ export default {
       }
     }
 
+    // 监听刷新单词列表事件
+    const handleRefreshWords = async () => {
+      console.log('收到刷新单词列表事件')
+      try {
+        await wordStore.refreshWords()
+        console.log('单词列表刷新成功')
+      } catch (error) {
+        console.error('刷新单词列表失败:', error)
+      }
+    }
+
     // 生命周期
     onMounted(async () => {
       console.log('=== APP TRACE: Vue app mounted, starting initialization ===')
       const appStartTime = Date.now()
+      
+      // 监听刷新单词列表事件
+      window.electronAPI.onRefreshWords(handleRefreshWords)
       
       // 加载透明度设置
       const settings = JSON.parse(localStorage.getItem('backgroundSettings') || '{}')
@@ -289,6 +303,7 @@ export default {
       // 清理事件监听器
       window.electronAPI.removeAllListeners('show-review-window')
       window.electronAPI.removeAllListeners('create-review-window')
+      window.electronAPI.removeAllListeners('refresh-words')
       document.removeEventListener('cardOpacityChange', handleCardOpacityChange)
       document.removeEventListener('blurEffectChange', handleBlurEffectChange)
     })
